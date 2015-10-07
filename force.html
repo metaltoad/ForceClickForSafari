@@ -1,0 +1,111 @@
+<html><head><title>Force Touch for the Web : Metal Toad</title>
+ <meta name = "author"   content="Robert Linnemann"/>
+ <meta name = "viewport" content="width=320, user-scalable=0"/>
+
+ <style type="text/css">
+    #circle {
+      position: absolute;
+      background-color: #ffff00;
+      width: 100px;
+      height: 100px;
+      border-radius: 50px;
+      display:block;
+    }
+
+    #touchArea {
+    	width:320px; 
+    	height:320px; 
+    	background-color: #666666;
+    	overflow: hidden;
+    }
+</style>
+
+<script type="text/javascript" language="javascript">
+
+var currentCircleSize = 100;
+var MAX_CIRCLE_SIZE = 150;
+var MIN_CIRCLE_SIZE = 2;
+var MOUSE_DOWN_REG = MouseEvent.WEBKIT_FORCE_AT_MOUSE_DOWN;
+var MOUSE_DOWN_FORCE = MouseEvent.WEBKIT_FORCE_AT_FORCE_MOUSE_DOWN;
+
+
+function mouseDown(event) {
+	circleSize(event.webkitForce);
+	circleMove(event.clientX, event.clientY);
+	updateTextReadout(event.webkitForce);
+}
+
+function mouseMoved(event) {
+	var force = (event.webkitForce==0)? 1: event.webkitForce;
+	//Since I am basing the size of the circle on this variable 
+	//I am limiting it to 1 so that the circle is always visible.
+	//A regular mouse will be 0 if you are not actively clicking.
+	circleSize(force);
+	circleMove(event.clientX, event.clientY);
+	updateTextReadout(event.webkitForce); //this prints the recorded value though
+}
+
+function forceWillBegin(event) {
+	event.preventDefault(); //allows you to override the normal click 
+							//and use a force touch action instead.
+}
+
+function forceDown(event) {
+	circleSize(event.webkitForce);
+	circleMove(event.clientX, event.clientY);
+}
+
+function forceChanged(event) {
+//	console.log("force " + event.webkitForce);
+	circleSize(event.webkitForce);
+	circleMove(event.clientX, event.clientY);
+	updateTextReadout(event.webkitForce);
+}
+
+function forceUp(event) {
+	//what's happening. I'm going to need you to come in tomorrow.
+}
+
+function circleSize(newSize) {
+	currentCircleSize = newSize * (MAX_CIRCLE_SIZE/3);//we know it is out of 3 because max size is
+													  //150 and we know it only goes to 3 (for now).
+	var circleElement = document.getElementById("circle");
+		circleElement.style.width = currentCircleSize;
+		circleElement.style.height = currentCircleSize;
+		circleElement.style.borderRadius = currentCircleSize/2;
+
+	if(newSize<=MOUSE_DOWN_REG){
+		circleElement.style.backgroundColor="#ffff00";
+	} else if(newSize>MOUSE_DOWN_REG && newSize < MOUSE_DOWN_FORCE){
+		circleElement.style.backgroundColor="#0099ff";
+	} else if(newSize>MOUSE_DOWN_FORCE){
+		circleElement.style.backgroundColor="#881111";
+	}
+}
+
+function circleMove(x,y) {
+	document.getElementById("circle").style.left = x - (currentCircleSize/2);
+	document.getElementById("circle").style.top = y - (currentCircleSize/2); 
+}
+
+function updateTextReadout(forceLevel) {
+	document.getElementById("textReadout").innerHTML = "force: " + forceLevel;
+}
+
+</script>
+</head>
+<body>
+
+<div id="touchArea"
+  onmousedown="mouseDown(event);"
+  onmousemove="mouseMoved(event);"
+  onWebkitmouseforcewillbegin="forceWillBegin(event);"
+  onWebkitmouseforcedown="forceDown(event);"
+  onWebkitmouseforcechanged="forceChanged(event);"
+  onWebkitmouseforceup="forceUp(event);" >
+<div id="textReadout" style="display:block; color:#ffffff;">force: 0</div>
+   <div id="circle"/>
+</div>
+
+</body>
+</html>
