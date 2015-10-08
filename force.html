@@ -67,6 +67,7 @@ function forceUp(event) {
 }
 
 function circleSize(newSize) {
+	if(typeof newSize === "undefined"){ newSize=1; }
 	currentCircleSize = newSize * (MAX_CIRCLE_SIZE/3);//we know it is out of 3 because max size is
 													  //150 and we know it only goes to 3 (for now).
 	var circleElement = document.getElementById("circle");
