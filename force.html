@@ -3,6 +3,9 @@
  <meta name = "viewport" content="width=320, user-scalable=0"/>
 
  <style type="text/css">
+    html {
+      -webkit-user-select: none;
+    }
     #circle {
       position: absolute;
       background-color: #ffff00;
@@ -71,9 +74,9 @@ function circleSize(newSize) {
 	currentCircleSize = newSize * (MAX_CIRCLE_SIZE/3);//we know it is out of 3 because max size is
 													  //150 and we know it only goes to 3 (for now).
 	var circleElement = document.getElementById("circle");
-		circleElement.style.width = currentCircleSize;
-		circleElement.style.height = currentCircleSize;
-		circleElement.style.borderRadius = currentCircleSize/2;
+		circleElement.style.width = currentCircleSize + 'px';
+		circleElement.style.height = currentCircleSize + 'px';
+		circleElement.style.borderRadius = (currentCircleSize/2) + 'px';
 
 	if(newSize<=MOUSE_DOWN_REG){
 		circleElement.style.backgroundColor="#ffff00";
